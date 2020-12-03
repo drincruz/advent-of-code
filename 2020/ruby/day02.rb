@@ -14,8 +14,8 @@ def parse_line(line)
   min_ch, max_ch = range.split('-')
 
   {
-    min: min_ch.to_i,
-    max: max_ch.to_i,
+    pos0: min_ch.to_i,
+    pos1: max_ch.to_i,
     char: char,
     password: password.strip
   }
@@ -23,14 +23,13 @@ end
 
 def password_valid?(password_data)
   password = password_data.fetch(:password)
+  pos0 = password_data.fetch(:pos0)
+  pos1 = password_data.fetch(:pos1)
+  chars = [password[pos0 - 1], password[pos1 - 1]]
 
-  count = 0
-  password.split('').each do |ch|
-    count += 1 if ch == password_data.fetch(:char)
-    return false if count > password_data.fetch(:max)
-  end
-
-  count >= password_data.fetch(:min)
+  return false if chars.all? { |ch| ch == password_data.fetch(:char) }
+  return true if chars.any? { |ch| ch == password_data.fetch(:char) }
+  false
 end
 
 def valid_passwords
