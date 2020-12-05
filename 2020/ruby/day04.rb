@@ -13,6 +13,14 @@ def update_passport(data, key, val)
 end
 
 def valid?(passport_record)
+  # byr (Birth Year)
+  # cid (Country ID) *optional*
+  # ecl (Eye Color)
+  # eyr (Expiration Year)
+  # hcl (Hair Color)
+  # hgt (Height)
+  # iyr (Issue Year)
+  # pid (Passport ID)
   required = %w[byr ecl eyr hcl hgt iyr pid]
 
   required.all? { |key| passport_record.keys.include?(key) }
@@ -29,13 +37,7 @@ def read_passport
   count = 0
   data.each do |line|
     if line.length.zero?
-      # count += 1 if valid?(passport)
-      if valid?(passport)
-        puts "GOOD #{passport.keys.sort}"
-        count += 1
-      else
-        puts "INVALID #{passport.keys.sort}"
-      end
+      count += 1 if valid?(passport)
       passport = {}
     end
 
@@ -43,7 +45,8 @@ def read_passport
     parsed_data.each { |k, v| passport = update_passport(passport, k, v) }
   end
 
-  count
+  # We need to check the last passport record.
+  valid?(passport) ? count + 1 : count
 end
 
 puts read_passport
