@@ -1,4 +1,5 @@
 # Advent of Code 2020: Day 03
+require 'set'
 
 def read_file(input_file)
   file = File.open(input_file)
@@ -26,57 +27,78 @@ def valid_keys?(passport_record)
   required.all? { |key| passport_record.keys.include?(key) }
 end
 
-def valid_data?(passport_record)
+def birth_year?(byr)
   # byr (Birth Year) - four digits; at least 1920 and at most 2002.
+  byr.between?(1920, 2002)
+end
+
+def issue_year?(iyr)
   # iyr (Issue Year) - four digits; at least 2010 and at most 2020.
+  iyr.between?(2010, 2020)
+end
+
+def expiration_year?(eyr)
   # eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
+  eyr.between?(2020, 2030)
+end
+
+def height?(hgt)
   # hgt (Height) - a number followed by either cm or in:
   # If cm, the number must be at least 150 and at most 193.
   # If in, the number must be at least 59 and at most 76.
-  # hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
-  # ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
-  # pid (Passport ID) - a nine-digit number, including leading zeroes.
-  # cid (Country ID) - ignored, missing or not.
-  byr = passport_record.fetch("byr", 0).to_i
-  return false if 1920 > byr || byr > 2002
-
-  iyr = passport_record.fetch("iyr", 0).to_i
-  return false if 2010 > iyr || iyr > 2020
-
-  eyr = passport_record.fetch("eyr", 0).to_i
-  return false if 2020 > eyr || eyr > 2030
-
-  hgt = passport_record.fetch("hgt", false)
   return false unless hgt.end_with?('cm') || hgt.end_with?('in')
 
-  if hgt.end_with?('cm')
-    cm = hgt.sub!('cm', '').to_i
-    return false if 150 > cm || cm > 193
-  else
-    inches = hgt.sub!('inches', '').to_i
-    return false if 59 > inches || inches > 76
-  end
+  return centimeters_height?(hgt) if hgt.end_with?('cm')
+  return inches_height?(hgt) if hgt.end_with?('in')
+end
 
-  hcl = passport_record.fetch("hcl", false)
+def centimeters_height?(hgt)
+  cm = hgt[0..-3].to_i
+  cm.between?(150, 193)
+end
+
+def inches_height?(hgt)
+  inches = hgt[0..-3].to_i
+  inches.between?(59, 76)
+end
+
+def hair_colour?(hcl)
+  # hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
   return false unless hcl.start_with?('#')
 
-  hcl.sub!('#', '')
-  return false unless hcl.length == 6
+  hcl_chars = hcl[1..-1]
+  return false unless hcl_chars.length == 6
 
-  valid_chars = {}
-  (0..9).each { |n| valid_chars[n.to_s] = 1 }
-  ('a'..'f').each { |ch| valid_chars[ch] = 1 }
-  return false unless hcl.split('').all? { |ch| valid_chars.fetch(ch, false) }
+  chars = ('a'..'f').to_a
+  numbers = (0..9).to_a.map(&:to_s)
+  valid_chars = Set.new(chars + numbers)
 
+  hcl_chars.split('').all? { |ch| valid_chars.include?(ch) }
+end
+
+def eye_colour?(ecl)
   # ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
-  ecl = passport_record.fetch("ecl", false)
-  return false unless %w[amb blu brn gry grn hzl oth].include?(ecl)
+  %w[amb blu brn gry grn hzl oth].include?(ecl)
+end
 
-  pid = passport_record.fetch("pid", false)
+def passport_id?(pid)
+  # pid (Passport ID) - a nine-digit number, including leading zeroes.
   return false unless pid.length == 9
 
-  nums = (0..9).to_a.map { |n| n.to_s }
-  pid.split('').all? { |n| nums.include?(n) }
+  numbers = (0..9).to_a.map(&:to_s)
+  pid.split('').all? { |n| numbers.include?(n) }
+end
+
+def valid_data?(passport_record)
+  return false unless birth_year?(passport_record.fetch('byr').to_i)
+  return false unless issue_year?(passport_record.fetch('iyr').to_i)
+  return false unless expiration_year?(passport_record.fetch('eyr').to_i)
+  return false unless height?(passport_record.fetch('hgt'))
+  return false unless hair_colour?(passport_record.fetch('hcl'))
+  return false unless eye_colour?(passport_record.fetch('ecl'))
+  return false unless passport_id?(passport_record.fetch('pid'))
+
+  true
 end
 
 def parse_line(line)
