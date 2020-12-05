@@ -1,4 +1,4 @@
-# Advent of Code 2020: Day 03
+# Advent of Code 2020: Day 04
 require 'set'
 
 def read_file(input_file)
