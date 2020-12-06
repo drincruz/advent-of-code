@@ -5,6 +5,14 @@
 # NOTES
 # - 128 rows in plane
 # - 8 seats per row
+# Part 2
+#  - find my seat
+#  - my seat will be missing from the list
+#  - fill the matrix (airplane seats)
+#  - then find a row that is missing a boarding pass (my seat)
+#  - very "front", very "back" seats may be missing
+#  - we just want to find the missing integer in the "middle"
+#  - we are searching for the point where |arr[index+1] - arr[index]| > 1
 
 def read_file(input_file)
   file = File.open(input_file)
@@ -61,7 +69,19 @@ def read_boarding_passes
   # multiply the row by 8, then add the column.
   boarding_passes = read_file('day05.txt')
 
-  boarding_passes.map { |pass| binary_row(pass) * 8 + binary_col(pass) }.max
+  sorted_boarding_passes = boarding_passes.map do |pass|
+    binary_row(pass) * 8 + binary_col(pass)
+  end.sort
+
+  i = 0
+  while i < sorted_boarding_passes.length - 1
+    left = sorted_boarding_passes[i]
+    right = sorted_boarding_passes[i + 1]
+    # We will print out the numbers where the difference is greater than 1.
+    puts "#{left}, #{right}" if right - left > 1
+
+    i += 1
+  end
 end
 
 puts read_boarding_passes
