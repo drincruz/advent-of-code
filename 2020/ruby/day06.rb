@@ -2,6 +2,9 @@
 # Part 1
 # Given groups of answers of a survey, count the unique amount of questions
 # per group.
+# Part 2
+# Instead of counting questions where anyone answered yes, we want to count
+# all the questions which _everyone_ answered yes.
 
 require_relative './utils'
 require 'set'
@@ -10,23 +13,25 @@ require 'set'
 class Day06
   include Utils
 
-  def line_char_set(line, set_chars)
-    set_chars.merge(Set.new(line.split('')))
+  def line_char_set(line)
+    Set.new(line.split(''))
   end
 
   def read_answers
     groups = read_file('day06.txt')
     groups.push('')
-    answers = Set.new
+    answers = []
     counts = []
 
     groups.each do |line|
       if line.length.zero?
-        counts.push(answers.length)
-        answers = Set.new
+        # I'm not sure why an empty Set was being pushed first for every array.
+        answers.shift
+        counts.push(answers.inject(:&).length)
+        answers = []
       end
 
-      answers = line_char_set(line, answers)
+      answers.push(line_char_set(line))
     end
 
     puts counts.sum
