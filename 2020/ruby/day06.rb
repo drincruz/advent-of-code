@@ -25,10 +25,10 @@ class Day06
 
     groups.each do |line|
       if line.length.zero?
-        # I'm not sure why an empty Set was being pushed first for every array.
-        answers.shift
         counts.push(answers.inject(:&).length)
         answers = []
+        # We don't want to deal with an empty string now, so we will `next`.
+        next
       end
 
       answers.push(line_char_set(line))
