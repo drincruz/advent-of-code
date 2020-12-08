@@ -2,6 +2,11 @@
 # Part 1
 # Given rules of bags and colours, we'll want to count the number of bags
 # that can contain 'shiny gold'.
+#
+# Part 2
+# Refactor Part 1 to now calculate the count of bags in total.
+# Note: not just the count of colours.
+# shiny gold bags contain 4 posh coral bags, 2 clear violet bags.
 
 require_relative './utils'
 require 'set'
@@ -61,7 +66,39 @@ class Day07
 
     puts bags_to_count.length
   end
+
+  def calculate_shiny_gold_bag_total
+    rules_hash = build_data
+
+    bag_stack = helper('shiny gold', rules_hash)
+    bag_data = {}
+    bag_counts = 0
+
+    while bag_stack.length.positive?
+      current_bag = bag_stack.pop
+      if rules_hash.fetch(current_bag).empty?
+        bag_data[current_bag] = 1
+        bag_count *= bag_data[current_bag]
+      else
+
+      end
+    end
+    # bag_counts = helper('shiny gold', rules_hash)
+    puts "#{bag_counts}"
+  end
+
+  def helper(variant, rules, counted_bags=[])
+    # shiny gold bags contain 4 posh coral bags, 2 clear violet bags.
+    bags = rules.fetch(variant, {})
+    return if bags.empty?
+
+    bags.each do |bag, _val|
+      helper(bag, rules, counted_bags)
+      counted_bags.push(bag)
+    end
+
+    counted_bags
+  end
 end
 
-
-Day07.new.calculate_bag_colours
+Day07.new.calculate_shiny_gold_bag_total
