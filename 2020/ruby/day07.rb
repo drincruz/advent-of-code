@@ -70,35 +70,21 @@ class Day07
   def calculate_shiny_gold_bag_total
     rules_hash = build_data
 
-    # bag_counts = helper('shiny gold', rules_hash)
-    bag_counts = fn('shiny gold', rules_hash)
+    bag_counts = fn('shiny gold', rules_hash, ['1 shiny gold'])
     puts "#{bag_counts}"
   end
 
-  def helper(variant, rules, counted_bags=[], count=[])
-    # shiny gold bags contain 4 posh coral bags, 2 clear violet bags.
-    bags = rules.fetch(variant, {})
-    if bags.empty?
-      return if counted_bags.length.zero?
-
-      count.push(counted_bags.reduce(1, :*))
-      counted_bags = []
-    end
-
-    bags.each do |bag, val|
-      helper(bag, rules, counted_bags, count)
-      counted_bags.push(val)
-    end
-
-    count
-  end
-
-  def fn(variant, rules)
+  def fn(variant, rules, stack=[])
     bags = rules.fetch(variant, {})
 
     return 1 if bags.empty?
 
-    bags.map { |bag, val| fn(bag, rules) }
+    bags.each do |bag, val|
+      stack.push("#{val} * #{bag}")
+      fn(bag, rules, stack)
+    end
+
+    stack
   end
 end
 
