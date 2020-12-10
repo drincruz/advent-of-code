@@ -2,6 +2,9 @@
 # Part 1
 # Find the first number _after_ the preamble (25) that does not
 # have two numbers that sum up to it in the previous 25 number sliding window.
+# Part 2
+# Now find a sub-array that sums up to 507622668.
+# Within this sub-array, return [min, max].
 
 require_relative './utils'
 require 'set'
@@ -25,20 +28,26 @@ class Day09
     false
   end
 
+  def found_target?(target, nums)
+    nums.sum == target
+  end
+
   def main
     numbers = read_file('day09.txt').map(&:to_i)
-
-    start_index = 25
     left = 0
-    right = 24
+    target = 507_622_668
 
-    while start_index < numbers.length
-      target = numbers[start_index]
-      return target unless two_sum?(target, numbers[left..right])
+    while left < numbers.length
+      right = left + 1
+      while right < numbers.length
+        tmp_arr = numbers[left..right]
+        return tmp_arr.minmax.sum if found_target?(target, tmp_arr)
 
+        break if tmp_arr.sum > target
+
+        right += 1
+      end
       left += 1
-      right += 1
-      start_index += 1
     end
 
     -1
