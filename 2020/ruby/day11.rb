@@ -69,6 +69,81 @@ class Day11
     count.positive? ? count : 0
   end
 
+  def left_row_occupied_count(seats, seat)
+    row, col = seat
+    left = col
+    count = 0
+
+    while left.positive?
+      break unless valid_col?(seats, left)
+      break if occupied?(seats[row][left])
+
+      count += 1
+      left -= 1
+    end
+
+    count
+  end
+
+  def right_row_occupied_count(seats, seat)
+    row, col = seat
+    right = col
+    count = 0
+
+    while right < seats[0].length
+      break unless valid_col?(seats, right)
+      break if occupied?(seats[row][right])
+
+      count += 1
+      right += 1
+    end
+
+    count
+  end
+
+  def up_col_occupied_count(seats, seat)
+    row, col = seat
+    up = row
+    count = 0
+
+    while up.positive?
+      break unless valid_row?(seats, up)
+      break if occupied?(seats[up][col])
+
+      count += 1
+      up -= 1
+    end
+
+    count
+  end
+
+  def down_col_occupied_count(seats, seat)
+    row, col = seat
+    down = row
+    count = 0
+
+    while down < seats.length
+      break unless valid_row?(seats, down)
+      break if occupied?(seats[down][col])
+
+      count += 1
+      down += 1
+    end
+
+    count
+  end
+
+  def first_occupied_seats(seats, seat)
+    count = 0
+
+    count += left_row_occupied_count(seats, seat)
+    count += right_row_occupied_count(seats, seat)
+    count += up_col_occupied_count(seats, seat)
+    count += down_col_occupied_count(seats, seat)
+
+    count
+  end
+
   def copy_seat_layout(seat_layout)
     new_layout = Array.new(seat_layout.length) do
       Array.new(seat_layout[0].length)
@@ -87,10 +162,10 @@ class Day11
 
     (0..seat_layout.length - 1).each do |row|
       (0..seat_layout[0].length - 1).each do |col|
-        occupied_count = occupied_adjacent_seats(seat_layout, [row, col])
+        occupied_count = first_occupied_seats(seat_layout, [row, col])
         if occupied_count.zero? && empty?(seat_layout[row][col])
           next_layout[row][col] = '#'
-        elsif occupied_count > 3 && occupied?(seat_layout[row][col])
+        elsif occupied_count > 4 && occupied?(seat_layout[row][col])
           next_layout[row][col] = 'L'
         end
       end
