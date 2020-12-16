@@ -3,6 +3,12 @@
 # Given an array of instructions, we want to navigate a ship along an X,Y plane.
 # Once we have the final destination, we want to calculate the Manhattan
 # Distance.
+#
+# Part 2
+# Refactor Part 1, because now we have new instructions.
+# N, S, E, W will move a waypoint.
+# L, R will rotate a waypoint
+# F will move the ship n-times towards the waypoint.
 require_relative './utils'
 
 # Day12
@@ -31,55 +37,59 @@ class Day12
     %i[north east south west]
   end
 
-  def left(value, current_direction = :east)
-    cur_index = directions.find_index(current_direction)
-    directions[(cur_index - value / 90) % 4]
-  end
-
-  def right(value, current_direction = :east)
-    cur_index = directions.find_index(current_direction)
-    directions[(cur_index + value / 90) % 4]
-  end
-
-  def forward(current, direction, value)
-    if direction == :north
-      current = north_south(current, value)
-    elsif direction == :south
-      current = north_south(current, -1 * value)
-    elsif direction == :east
-      current = east_west(current, value)
-    elsif direction == :west
-      current = east_west(current, -1 * value)
+  def left(current, value)
+    # Rotate 90 degrees
+    # (x, y) -> (y * -1, x)
+    # Example:
+    # - (10, 4)
+    # - (-4, 10)
+    # - (-10, -4)
+    # - (4, -10)
+    (0..(value / 90) - 1).inject(current) do |coordinate, _n|
+      [coordinate[1] * -1, coordinate[0]]
     end
+  end
 
-    current
+  def right(current, value)
+    # Rotate works similarly to left/2 except we'll take the negated value of y.
+    (0..(value / 90) - 1).inject(current) do |coordinate, _n|
+      [coordinate[1], coordinate[0] * -1]
+    end
+  end
+
+  def forward(ship, waypoint, value)
+    waypoint_x = waypoint[0] * value
+    waypoint_y = waypoint[1] * value
+
+    [ship[0] + waypoint_x, ship[1] + waypoint_y]
   end
 
   def main
     instructions = data.map { |line| parse_line(line) }
     current_direction = :east
-    current_location = [0, 0]
+    current_ship = [0, 0]
+    current_waypoint = [10, 1]
 
     instructions.each do |action, value|
       if action == 'F'
-        current_location = forward(current_location, current_direction, value)
+        current_ship = forward(current_ship, current_waypoint, value)
       elsif action == 'N'
-        current_location = north_south(current_location, value)
+        current_waypoint = north_south(current_waypoint, value)
       elsif action == 'S'
-        current_location = north_south(current_location, -1 * value)
+        current_waypoint = north_south(current_waypoint, -1 * value)
       elsif action == 'E'
-        current_location = east_west(current_location, value)
+        current_waypoint = east_west(current_waypoint, value)
       elsif action == 'W'
-        current_location = east_west(current_location, -1 * value)
+        current_waypoint = east_west(current_waypoint, -1 * value)
       elsif action == 'L'
-        current_direction = left(value, current_direction)
+        current_waypoint = left(current_waypoint, value)
       elsif action == 'R'
-        current_direction = right(value, current_direction)
+        current_waypoint = right(current_waypoint, value)
       end
     end
 
-    puts "#{current_location} #{current_direction}"
-    puts current_location[0].abs + current_location[1].abs
+    puts "#{current_ship} #{current_waypoint}"
+    puts current_ship[0].abs + current_ship[1].abs
   end
 end
 
