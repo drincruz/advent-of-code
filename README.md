@@ -1,2 +1,8 @@
-# advent_of_code_2018
-Advent of Code 2018 (http://adventofcode.com)
+# Advent of Code
+
+Checkout out [Advent of Code](https://adventofcode.com/) and get some coding done!
+
+## Code
+
+I will probably use different programming languages to just exercise my brain. 
+So, you will find different sub-directories of programming languages within them.
