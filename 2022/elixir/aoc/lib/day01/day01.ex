@@ -41,4 +41,24 @@ defmodule Aoc.Day01 do
     |> Stream.map(fn sublist -> Enum.sum(sublist) end)
     |> Enum.max()
   end
+
+  @doc """
+  We want to calculate the top 3 sums of a list of lists.
+
+   - Read in values from data.txt
+   - Sum the sub-lists
+   - Sort sums of the list
+   - Sort the list
+   - Take the 3 largest values
+   - Sum those values
+  """
+  def elf_top_3_max do
+    read()
+    |> Stream.chunk_by(fn val -> val != nil end)
+    |> Stream.reject(fn val -> val == [nil] end)
+    |> Stream.map(fn sublist -> Enum.sum(sublist) end)
+    |> Enum.sort()
+    |> Enum.take(-3)
+    |> Enum.sum()
+  end
 end
