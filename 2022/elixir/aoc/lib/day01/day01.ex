@@ -30,33 +30,40 @@ defmodule Aoc.Day01 do
   end
 
   @doc """
-  This will bind all of our functions together and calculate the elf.
+  Return a Stream list of calories sums.
 
-   - Read the file
+   - Read in values from data.txt
+   - Sum the sub-lists
+   - Sort sums of the list
   """
-  def elf_max do
+  def get_list_of_calorie_sums do
     read()
     |> Stream.chunk_by(fn val -> val != nil end)
     |> Stream.reject(fn val -> val == [nil] end)
     |> Stream.map(fn sublist -> Enum.sum(sublist) end)
+  end
+
+  @doc """
+  Return the max sum from the calories sums list.
+
+   - Get the list of calories sums
+   - Find the max
+  """
+  def elf_max do
+    get_list_of_calorie_sums()
     |> Enum.max()
   end
 
   @doc """
   We want to calculate the top 3 sums of a list of lists.
 
-   - Read in values from data.txt
-   - Sum the sub-lists
-   - Sort sums of the list
+   - Get the list of calories sums
    - Sort the list
    - Take the 3 largest values
    - Sum those values
   """
   def elf_top_3_max do
-    read()
-    |> Stream.chunk_by(fn val -> val != nil end)
-    |> Stream.reject(fn val -> val == [nil] end)
-    |> Stream.map(fn sublist -> Enum.sum(sublist) end)
+    get_list_of_calorie_sums()
     |> Enum.sort()
     |> Enum.take(-3)
     |> Enum.sum()
