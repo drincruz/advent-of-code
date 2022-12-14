@@ -37,10 +37,53 @@ insert_final_newline = true
 ;; https://github.com/rust-lang/rust/blob/master/src/doc/style/style/whitespace.md
 [*.rs]
 indent_size = 4
+indent_style = space
+insert_final_newline = false
+trim_trailing_whitespace = true
 
-;; from https://github.com/microsoft/TypeScript/blob/master/.editorconfig
+;; https://github.com/airbnb/javascript/blob/master/.editorconfig
 [*.{ts,json,js}]
-end_of_line = crlf
+end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+indent_style = space
+indent_size = 2
+
+;; adapted from https://wiki.haskell.org/Programming_guidelines
+[*.hs]
+charset = utf-8
+end_of_line = lf
+indent_size = 2
+indent_style = space
+max_line_length = 80
+trim_trailing_whitespace = true
+
+;; Kotlin
+;; From https://github.com/pinterest/ktlint#editorconfig
+[*.{kt,kts}]
+# possible values: number (e.g. 2), "unset" (makes ktlint ignore indentation completely)
+indent_size=4
+# true (recommended) / false
+insert_final_newline=true
+# possible values: number (e.g. 120) (package name, imports & comments are ignored), "off"
+# it's automatically set to 100 on `ktlint --android ...` (per Android Kotlin Style Guide)
+max_line_length=off
+indent_style = space
+
+;; Perl
+;; https://perldoc.perl.org/perlstyle
+[*.{pl,pm,t,PL}]
+max_line_length = off
+end_of_line = lf
+indent_style = space
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_size = 4
+
+;; Python
+[*.py]
+indent_style = space
+indent_size = 4
+max_line_length = 100
