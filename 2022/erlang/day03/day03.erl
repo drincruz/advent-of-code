@@ -31,6 +31,25 @@ strings_to_ordsets(List) ->
     List
   ).
 
+% Map a list with ordsets to get a set of the characters in the strings.
+map_chunk_to_ordset(List) ->
+  lists:map(fun ordsets:from_list/1, List).
+
+get_chunk_intersections([], Intersection) -> Intersection;
+get_chunk_intersections([H | T], Intersection) ->
+  get_chunk_intersections(T, ordsets:intersection(H, Intersection)).
+
+% Map the list with the chunk intersections
+% - The List of lists get flattened to just the intersection character.
+map_chunk_intersections(List) ->
+  lists:map(
+    fun (L) ->
+      [H | T] = L,
+      get_chunk_intersections(T, H)
+    end,
+    List 
+  ).
+
 % Map function to find the intersection of two sets.
 find_intersections({LeftSet, RightSet}) ->
   ordsets:intersection(LeftSet, RightSet).
@@ -59,8 +78,16 @@ map_alphabet_values(List) ->
 map_sums(List) ->
   lists:map(fun (SubList) -> lists:sum(SubList) end, List).
 
-% Start the process.
-start() ->
+% Create a resultant list of sublists chunked in 3s.
+chunk_list([], Tmp, ResultList) -> [Tmp | ResultList];
+chunk_list([H | T], Tmp, ResultList) when length(Tmp) < 3 ->
+  chunk_list(T, [H | Tmp], ResultList);
+chunk_list(OriginalList, Tmp, ResultList) ->
+  chunk_list(OriginalList, [], [Tmp | ResultList]).
+
+
+% Split the strings in half and find the intersecting character.
+part01() ->
   GetList = read_file(),
   Halves = map_halves_list(GetList),
   OrdSets = strings_to_ordsets(Halves),
@@ -68,3 +95,22 @@ start() ->
   AlphabetVals = map_alphabet_values(Intersections),
   Sums = map_sums(AlphabetVals),
   lists:sum(Sums).
+
+% Chunk the input in groups of 3s, get the intersection of the 3.
+part02() ->
+  Alphabet = get_alphabet_map(),
+  GetList = read_file(),
+  Chunks = chunk_list(GetList, [], []),
+  OrdSets = lists:map(fun map_chunk_to_ordset/1, Chunks),
+  Intersections = map_chunk_intersections(OrdSets),
+  Vals = lists:map(
+    fun (Ch) ->
+      maps:get(hd(Ch), Alphabet)
+    end,
+    Intersections
+  ),
+  lists:sum(Vals).
+
+% Start the process.
+start() ->
+  {part01(), part02()}.
