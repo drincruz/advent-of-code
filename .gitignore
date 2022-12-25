@@ -7,6 +7,10 @@ erl_crash.dump
 *.ez
 *.beam
 /config/*.secret.exs
+# ARM Assembly
+*.elf
+*.o
+*.out
 # Haskell
 .stack-work/
 # Rust
