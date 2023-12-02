@@ -1,4 +1,4 @@
-import { readFileToArray } from "../../src/lib";
+import { readFileToArray } from "../../lib";
 
 describe("readFileToArray", () => {
   it("should read file and return an array of lines", async () => {
