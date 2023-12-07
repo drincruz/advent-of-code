@@ -1,1 +1,9 @@
-export { isPossibleGame, parseCubeSubsets, parseGameInput } from "./day02";
+export {
+  getColourMaximums,
+  getCubeSubsetPower,
+  getSumOfCubeSubsetPowers,
+  isPossibleGame,
+  parseCubeSubsets,
+  parseGameInput,
+  type GameRecord,
+} from "./day02";

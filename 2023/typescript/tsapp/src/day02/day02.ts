@@ -58,6 +58,49 @@ export function isPossibleGame(
   });
 }
 
+/**
+ * Get the maximum values for each colour in an Array of cube subsets.
+ * This will give us the _minimum_ number of cubes of each colour that we need.
+ *
+ * @param {CubeSubset} subsets
+ * @returns {CubeSubset}
+ */
+export function getColourMaximums(subsets: CubeSubset[]): CubeSubset {
+  return subsets.reduce((acc, subset) => {
+    Object.keys(subset).forEach((colour) => {
+      if (!acc[colour] || subset[colour] > acc[colour]) {
+        acc[colour] = subset[colour];
+      }
+    });
+    return acc;
+  }, {} as CubeSubset);
+}
+
+/**
+ * Get the power of a cube subset.
+ * We are multiplying the cube subset values together to get the power.
+ *
+ * @param {CubeSubset} subset
+ * @returns {number}
+ */
+export function getCubeSubsetPower(subset: CubeSubset): number {
+  return Object.values(subset).reduce((acc, value) => {
+    return acc * value;
+  }, 1);
+}
+
+/**
+ * Given an Array of cube subsets, get the sum of the power of each subset.
+ *
+ * @param {CubeSubset} subsets
+ * @returns {number}
+ */
+export function getSumOfCubeSubsetPowers(subsets: CubeSubset[]): number {
+  return subsets.reduce((acc, subset) => {
+    return acc + getCubeSubsetPower(subset);
+  }, 0);
+}
+
 function main() {
   const input = readFileToArray(`${__dirname}/input.txt`);
   const constraints: CubeSubset = { blue: 14, green: 13, red: 12 };
@@ -75,6 +118,20 @@ function main() {
   }, 0);
 
   console.log(possibleGamesIdTotal);
+
+  // Part 2
+  const gameColourMaximums: CubeSubset[] = games
+    .filter((game) => {
+      return !isNaN(Number(game.game));
+    })
+    .map((game) => game.colours)
+    .map(getColourMaximums);
+  const powerValues: number[] = gameColourMaximums.map(getCubeSubsetPower);
+  const cubeValuesTotal: number = powerValues.reduce((acc, value) => {
+    return acc + value;
+  }, 0);
+
+  console.log(cubeValuesTotal);
 }
 
 main();
