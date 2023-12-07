@@ -5,7 +5,6 @@ import {
   isPossibleGame,
   parseCubeSubsets,
   parseGameInput,
-  type GameRecord,
 } from "../../day02";
 
 describe("parseGameInput", () => {
